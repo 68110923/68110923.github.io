@@ -17,7 +17,7 @@ const DEFAULT_LANG_COLOR = '#8b8b8b';
 // ===== State =====
 let allRepos = [];
 let filteredRepos = [];
-let currentFilter = 'all';
+let currentFilter = 'pages';
 let currentSort = 'updated';
 let searchQuery = '';
 
