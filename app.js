@@ -104,9 +104,9 @@ function renderCards(repos) {
                         ${isPrivate ? '<span class="badge badge-private">Private</span>' : '<span class="badge badge-public">Public</span>'}
                     </div>
                 </div>
-                <div class="repo-desc">${description}</div>
+                <div class="repo-desc" title="${(r.description || '').replace(/"/g,'&quot;')}">${description}</div>
                 <div class="card-meta">
-                    <span><i class="fa-solid fa-star" style="color:#fbbf24"></i> ${r.stargazers_count}</span>
+                    <a href="${r.html_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="在 GitHub 上点 Star"><i class="fa-solid fa-star" style="color:#fbbf24"></i> ${r.stargazers_count}</a>
                     <span><i class="fa-solid fa-code-fork" style="color:#94a3b8"></i> ${r.forks_count}</span>
                     ${r.language ? `<span><i class="fa-solid fa-circle" style="color:${langColor};font-size:0.5rem;vertical-align:middle"></i> ${r.language}</span>` : ''}
                     <span><i class="fa-regular fa-clock"></i> ${relativeTime(r.pushed_at)}</span>
