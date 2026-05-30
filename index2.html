@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>68110923</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:#fafafa;color:#111;min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Container */
+.container{max-width:1040px;margin:0 auto;padding:0 24px}
+
+/* Hero */
+.hero{padding:120px 0 60px;text-align:center}
+.hero-avatar{
+    width:80px;height:80px;border-radius:50%;margin:0 auto 24px;
+    border:2px solid #e5e5e5;overflow:hidden;transition:transform .4s;
+}
+.hero-avatar:hover{transform:scale(1.04)}
+.hero-avatar img{width:100%;height:100%;object-fit:cover}
+.hero-name{
+    font-size:2.8rem;font-weight:700;letter-spacing:-.03em;
+    margin-bottom:8px;color:#111;
+}
+.hero-bio{
+    font-size:1rem;color:#888;max-width:420px;margin:0 auto 32px;line-height:1.6;
+}
+
+/* Stats inline */
+.stats-inline{
+    display:flex;justify-content:center;gap:32px;margin-bottom:48px;
+    font-size:.85rem;color:#666;
+}
+.stats-inline span{display:flex;align-items:center;gap:6px}
+.stats-inline strong{color:#111;font-weight:600}
+
+/* Separator */
+.sep{width:40px;height:2px;background:#111;margin:0 auto 48px;opacity:.15}
+
+/* Controls */
+.controls{display:flex;gap:12px;margin-bottom:40px;align-items:center;flex-wrap:wrap}
+.controls .search-bar{
+    flex:1;min-width:180px;padding:10px 0;border:none;border-bottom:1.5px solid #e5e5e5;
+    font-family:inherit;font-size:.9rem;outline:none;color:#111;background:transparent;
+    transition:border-color .25s;
+}
+.controls .search-bar:focus{border-color:#111}
+.controls .search-bar::placeholder{color:#bbb}
+.filter-group{display:flex;gap:4px}
+.filter-btn{
+    font-family:inherit;font-size:.8rem;font-weight:500;padding:6px 16px;
+    border:none;background:transparent;color:#888;cursor:pointer;
+    transition:all .2s;border-radius:0;
+}
+.filter-btn.active{color:#111}
+.filter-btn::after{content:'';display:block;width:0;height:1.5px;background:#111;transition:width .25s;margin-top:2px}
+.filter-btn.active::after{width:100%}
+.filter-btn:hover:not(.active){color:#555}
+.sort-select{
+    font-family:inherit;font-size:.8rem;padding:6px 0;margin-left:auto;
+    border:none;background:transparent;color:#888;outline:none;cursor:pointer;
+}
+
+/* Grid */
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;padding-bottom:80px}
+.project-card{
+    background:#fff;border:1px solid #eee;border-radius:0;padding:28px;
+    transition:all .3s;position:relative;
+}
+.project-card:hover{border-color:#ddd;box-shadow:0 4px 24px rgba(0,0,0,.04)}
+.card-top{margin-bottom:12px}
+.repo-name{
+    font-size:1.15rem;font-weight:600;color:#111;letter-spacing:-.01em;
+    display:flex;align-items:center;gap:8px;
+}
+.repo-name i{font-size:.65rem;opacity:0;transition:all .25s;color:#999}
+.project-card:hover .repo-name i{opacity:1;transform:translate(2px,-2px)}
+.badges{display:flex;gap:6px;margin-top:10px}
+.badge{
+    font-size:.6rem;font-weight:600;padding:2px 10px;letter-spacing:.04em;text-transform:uppercase;
+    border:1px solid #e5e5e5;color:#999;
+}
+.badge.pages{border-color:#111;color:#111}
+.badge.private{border-color:#ffd5d5;color:#c44}
+.badge.public{border-color:#d5ffd5;color:#282}
+.repo-desc{font-size:.85rem;color:#888;line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{display:flex;align-items:center;gap:14px;font-size:.78rem;color:#aaa;flex-wrap:wrap}
+.card-meta span{display:flex;align-items:center;gap:4px}
+.card-link{
+    margin-left:auto;font-size:.78rem;color:#888;font-weight:500;
+    transition:color .2s;display:inline-flex;align-items:center;gap:4px;
+}
+.card-link:hover{color:#111}
+
+/* Topics */
+.repo-topics{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.topic-tag{
+    font-size:.6rem;font-weight:500;padding:1px 8px;
+    border:1px solid #eee;color:#aaa;transition:all .2s;
+}
+.topic-tag:hover{border-color:#ddd;color:#888}
+
+/* Skeleton */
+.skeleton-card{border:1px solid #eee;padding:28px}
+.skeleton{background:linear-gradient(90deg,#f5f5f5 25%,#eee 50%,#f5f5f5 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:0;height:14px;margin-bottom:12px}
+.skeleton.short{width:40%}.skeleton.long{width:90%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Empty & Error */
+.empty-state,.error-state{text-align:center;padding:80px 20px;grid-column:1/-1;color:#aaa}
+.error-state .fa-solid{font-size:2.5rem;color:#ddd;margin-bottom:12px}
+.error-state h3{font-size:1rem;color:#888;margin-bottom:6px}
+.error-state p{font-size:.85rem;margin-bottom:16px}
+.retry-btn{font-family:inherit;font-size:.85rem;padding:8px 24px;border:1px solid #ddd;background:transparent;color:#555;cursor:pointer;transition:all .2s}
+.retry-btn:hover{border-color:#111;color:#111}
+
+/* Footer */
+.footer{text-align:center;padding:32px 20px 48px;font-size:.78rem;color:#bbb;border-top:1px solid #f0f0f0}
+.footer a{color:#888;transition:color .2s}
+.footer a:hover{color:#111}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.project-card{animation:fadeInUp .4s ease-out both}
+
+/* Responsive */
+@media(max-width:768px){
+    .hero{padding:80px 0 40px}.hero-name{font-size:2rem}
+    .stats-inline{gap:16px;font-size:.78rem;flex-wrap:wrap}
+    .controls{flex-direction:column;align-items:stretch}
+    .filter-group{justify-content:center}.sort-select{margin-left:0}
+    .project-grid{grid-template-columns:1fr;gap:16px}
+}
+@media(max-width:480px){
+    .hero{padding:60px 0 30px}.hero-name{font-size:1.6rem}
+    .project-card{padding:20px}.container{padding:0 16px}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+    <div class="container">
+        <div class="hero-avatar"><img id="avatarImg" src="https://avatars.githubusercontent.com/u/68110923?v=4" alt=""></div>
+        <h1 class="hero-name" id="heroName">68110923</h1>
+        <p class="hero-bio" id="heroBio">Loading...</p>
+        <div class="stats-inline">
+            <span>📦 <strong id="statRepos">--</strong> projects</span>
+            <span>🌐 <strong id="statPages">--</strong> with pages</span>
+            <span>⭐ <strong id="statStars">--</strong> stars</span>
+            <span>🍴 <strong id="statForks">--</strong> forks</span>
+        </div>
+    </div>
+</div>
+
+<div class="sep"></div>
+
+<div class="container">
+    <div class="controls">
+        <input class="search-bar" id="searchInput" type="text" placeholder="Search projects..." autocomplete="off">
+        <div class="filter-group">
+            <button class="filter-btn" data-filter="all">All</button>
+            <button class="filter-btn active" data-filter="pages">Featured</button>
+        </div>
+        <select class="sort-select" id="sortSelect">
+            <option value="updated">Latest</option>
+            <option value="stars">Most stars</option>
+            <option value="name">A–Z</option>
+        </select>
+    </div>
+</div>
+
+<div class="container">
+    <div class="project-grid card-stagger" id="projectGrid">
+        <div class="skeleton-card"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line long" style="margin-top:16px"></div><div class="skeleton skeleton-line" style="width:60%"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line long" style="margin-top:16px"></div><div class="skeleton skeleton-line" style="width:60%"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line long" style="margin-top:16px"></div><div class="skeleton skeleton-line" style="width:60%"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line long" style="margin-top:16px"></div><div class="skeleton skeleton-line" style="width:60%"></div></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="container">
+        <p>© <span id="footerYear">2026</span> 68110923 · <a href="https://github.com/68110923" target="_blank" rel="noopener">GitHub</a></p>
+    </div>
+</div>
+
+<script>
+const USERNAME='68110923',API='https://api.github.com',PAGES=`https://${USERNAME}.github.io`;
+let allRepos=[],currentFilter='pages',currentSort='updated',searchQuery='';
+const grid=document.getElementById('projectGrid'),si=document.getElementById('searchInput'),ss=document.getElementById('sortSelect'),fb=document.querySelectorAll('.filter-btn');
+function rt(d){const n=Date.now(),t=new Date(d).getTime(),diff=Math.max(0,n-t),m=Math.floor(diff/6e4);if(m<1)return'now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const D=Math.floor(h/24);if(D<30)return D+'d';const M=Math.floor(D/30);return M<12?M+'mo':Math.floor(M/12)+'y'}
+async function fu(){const r=await fetch(`${API}/users/${USERNAME}`);if(!r.ok)throw Error('fail');return r.json()}
+async function fr(){let a=[],p=1;while(1){const r=await fetch(`${API}/users/${USERNAME}/repos?per_page=100&page=${p}&sort=updated`);if(!r.ok)throw Error('fail');const d=await r.json();if(!d.length)break;a=a.concat(d);p++}return a}
+function render(repos){
+    if(!repos.length){grid.innerHTML=`<div class="empty-state"><p>No projects match your criteria.</p></div>`;return}
+    grid.innerHTML=repos.map((r,i)=>{
+        const hp=r.has_pages,url=hp?`${PAGES}/${r.name}/`:r.html_url,lb=hp?'Visit site':'Source',pr=r.private,lc=r.language?{JavaScript:'#f7df1e',TypeScript:'#3178c6',Python:'#3572a5',Go:'#00add8','C++':'#f34b7d',Java:'#b07219',Ruby:'#701516',Shell:'#89e051',HTML:'#e34c26',CSS:'#563d7c',Vue:'#4fc08d',Rust:'#dea584',Kotlin:'#a97bff',Swift:'#f05138'}[r.language]||'#8b8b8b':'#8b8b8b';
+        return`<div class="project-card" style="animation-delay:${Math.min(i*.04,.5)}s">
+            <div class="card-top">
+                <div class="repo-name"><span>${r.name}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                <div class="badges">${hp?'<span class="badge pages">Pages</span>':''}${pr?'<span class="badge private">Private</span>':'<span class="badge public">Public</span>'}</div>
+            </div>
+            <div class="repo-desc" title="${(r.description||'').replace(/"/g,'&quot;')}">${r.description||'No description'}</div>
+            ${r.topics&&r.topics.length?`<div class="repo-topics">${r.topics.map(t=>`<span class="topic-tag">${t}</span>`).join('')}</div>`:''}
+            <div class="card-meta">
+                <a href="${r.html_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Star on GitHub">⭐ ${r.stargazers_count}</a>
+                <span>🍴 ${r.forks_count}</span>
+                ${r.language?`<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lc};vertical-align:middle"></span> ${r.language}</span>`:''}
+                <span>${rt(r.pushed_at)}</span>
+                <a href="${url}" target="_blank" rel="noopener" class="card-link">${lb} →</a>
+            </div>
+        </div>`
+    }).join('');
+}
+function apply(){let l=[...allRepos];if(currentFilter==='pages')l=l.filter(r=>r.has_pages);if(searchQuery){const q=searchQuery.toLowerCase();l=l.filter(r=>r.name.toLowerCase().includes(q)||(r.description&&r.description.toLowerCase().includes(q))||(r.topics&&r.topics.some(t=>t.includes(q))))}
+if(currentSort==='stars')l.sort((a,b)=>b.stargazers_count-a.stargazers_count);else if(currentSort==='name')l.sort((a,b)=>a.name.localeCompare(b.name));else l.sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));render(l)}
+function us(repos,user){document.getElementById('statRepos').textContent=repos.length;document.getElementById('statPages').textContent=repos.filter(r=>r.has_pages).length;document.getElementById('statStars').textContent=repos.reduce((s,r)=>s+r.stargazers_count,0);document.getElementById('statForks').textContent=repos.reduce((s,r)=>s+r.forks_count,0);if(user){document.getElementById('heroName').textContent=user.login;document.getElementById('heroBio').textContent=user.bio||'Developer';document.getElementById('avatarImg').src=user.avatar_url}}
+async function init(){try{const[u,repos]=await Promise.all([fu(),fr()]);allRepos=repos.filter(r=>!r.fork&&r.name!==`${USERNAME}.github.io`);us(allRepos,u);apply()}catch(e){grid.innerHTML=`<div class="error-state"><i class="fa-solid fa-circle-exclamation"></i><h3>Failed to load</h3><p>${e.message}</p><button class="retry-btn" onclick="init()">Retry</button></div>`}}
+si.addEventListener('input',e=>{searchQuery=e.target.value;apply()});ss.addEventListener('change',e=>{currentSort=e.target.value;apply()});
+fb.forEach(b=>{b.addEventListener('click',()=>{fb.forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;apply()})});
+document.getElementById('footerYear').textContent=new Date().getFullYear();init();
+</script>
+</body>
+</html>

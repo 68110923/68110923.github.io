@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>68110923 ✦ projects</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:#1a1a2e;color:#e8e8f0;min-height:100vh;
+}
+
+/* Mesh gradient background */
+body::before{
+    content:'';position:fixed;inset:0;z-index:-2;
+    background:
+        radial-gradient(ellipse at 20% 0%,#16213e 0%,transparent 60%),
+        radial-gradient(ellipse at 80% 80%,#1a1a2e 0%,transparent 50%),
+        radial-gradient(ellipse at 50% 50%,#0f3460 0%,#1a1a2e 100%);
+}
+body::after{
+    content:'';position:fixed;inset:0;z-index:-1;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity:.5;
+}
+
+.container{max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* HEADER — bold, asymmetric */
+header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 0;border-bottom:2px solid rgba(255,255,255,.06);margin-bottom:40px;
+}
+.logo{font-size:1.8rem;font-weight:700;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo .accent{color:#e94560}
+.logo span{font-size:.8rem;font-weight:400;color:rgba(255,255,255,.2);margin-left:4px}
+header .gh-link{
+    font-size:.85rem;font-weight:600;
+    padding:8px 20px;border:2px solid rgba(255,255,255,.08);border-radius:50px;
+    transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+header .gh-link:hover{border-color:#e94560;background:rgba(233,69,96,.08)}
+
+/* Hero tag */
+.hero-tag{
+    display:flex;align-items:center;gap:16px;margin-bottom:32px;font-size:.85rem;color:rgba(255,255,255,.3);
+    flex-wrap:wrap;
+}
+.hero-tag .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(233,69,96,.12);color:#e94560;padding:4px 14px;border-radius:50px;
+    font-size:.75rem;font-weight:600;
+}
+.hero-tag span{font-size:.8rem}
+
+/* Dash grid stats */
+.dash{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:40px;
+}
+.dash-item{
+    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+    border-radius:12px;padding:16px;text-align:center;
+}
+.dash-num{font-size:1.8rem;font-weight:700;font-variant-numeric:tabular-nums}
+.dash-num.repos{color:#6ee7b7}.dash-num.pages{color:#e94560}.dash-num.stars{color:#fbbf24}.dash-num.forks{color:#818cf8}
+.dash-label{font-size:.7rem;color:rgba(255,255,255,.3);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+
+/* Search + filter row */
+.action-bar{
+    display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;align-items:center;
+}
+.action-bar input{
+    flex:1;min-width:160px;padding:12px 18px;
+    background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.06);border-radius:50px;
+    font-family:inherit;font-size:.9rem;color:#e8e8f0;outline:none;transition:all .25s;
+}
+.action-bar input:focus{border-color:#e94560;background:rgba(233,69,96,.04)}
+.action-bar input::placeholder{color:rgba(255,255,255,.15)}
+.filter-group{display:flex;gap:4px}
+.filter-btn{
+    font-family:inherit;font-size:.78rem;font-weight:600;padding:8px 20px;
+    border:2px solid transparent;border-radius:50px;cursor:pointer;transition:all .2s;
+    background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);
+}
+.filter-btn.active{border-color:#e94560;color:#e94560;background:rgba(233,69,96,.08)}
+.filter-btn:hover:not(.active){background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.sort-select{
+    font-family:inherit;font-size:.78rem;padding:8px 16px;margin-left:auto;
+    background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.06);border-radius:50px;
+    color:rgba(255,255,255,.4);outline:none;cursor:pointer;transition:all .25s;
+}
+.sort-select:hover{border-color:rgba(255,255,255,.12)}
+
+/* Project grid */
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding-bottom:80px}
+.project-card{
+    background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);
+    border-radius:16px;padding:24px;position:relative;overflow:hidden;
+    transition:all .3s;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+.project-card:nth-child(6n+1){border-left:3px solid #e94560}
+.project-card:nth-child(6n+2){border-left:3px solid #6ee7b7}
+.project-card:nth-child(6n+3){border-left:3px solid #fbbf24}
+.project-card:nth-child(6n+4){border-left:3px solid #818cf8}
+.project-card:nth-child(6n+5){border-left:3px solid #f472b6}
+.project-card:nth-child(6n+6){border-left:3px solid #2dd4bf}
+.project-card:hover{transform:translateY(-4px)scale(1.01);border-color:rgba(255,255,255,.12)}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.repo-name{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:6px}
+.repo-name i{font-size:.55rem;opacity:0;transition:all .25s;color:rgba(255,255,255,.3)}
+.project-card:hover .repo-name i{opacity:1;transform:translate(3px,-2px)}
+.card-badges{display:flex;gap:4px;flex-shrink:0}
+.badge{
+    font-size:.55rem;font-weight:700;padding:2px 10px;border-radius:50px;
+    text-transform:uppercase;letter-spacing:.06em;
+}
+.badge.pages{background:rgba(233,69,96,.15);color:#e94560}
+.badge.private{background:rgba(244,63,94,.1);color:#fb7185}
+.badge.public{background:rgba(52,211,153,.1);color:#6ee7b7}
+.repo-desc{font-size:.85rem;color:rgba(255,255,255,.35);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.repo-topics{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:12px}
+.topic-tag{
+    font-size:.58rem;font-weight:500;padding:1px 9px;border-radius:50px;
+    background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);
+    transition:all .2s;
+}
+.topic-tag:hover{background:rgba(233,69,96,.1);color:#e94560}
+.card-meta{display:flex;align-items:center;gap:12px;font-size:.75rem;color:rgba(255,255,255,.25);flex-wrap:wrap}
+.card-meta span{display:flex;align-items:center;gap:4px}
+.card-meta .fa-star{color:#fbbf24}
+.card-link{
+    margin-left:auto;font-size:.72rem;font-weight:700;
+    padding:4px 14px;border-radius:50px;
+    border:1.5px solid rgba(255,255,255,.06);color:rgba(255,255,255,.4);
+    transition:all .25s;display:inline-flex;align-items:center;gap:4px;
+}
+.card-link:hover{border-color:#e94560;color:#e94560}
+
+/* Skeleton */
+.skeleton-card{border-radius:16px;border:1px solid rgba(255,255,255,.06);padding:24px;background:rgba(255,255,255,.02)}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.06) 50%,rgba(255,255,255,.03) 75%);background-size:200% 100%;border-radius:6px;animation:shim 1.6s infinite;height:12px;margin-bottom:10px}
+.skeleton.short{width:35%}.skeleton.long{width:80%}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+
+.empty-state,.error-state{text-align:center;padding:70px 20px;grid-column:1/-1;color:rgba(255,255,255,.2)}
+.error-state .fa-solid{font-size:2.2rem;margin-bottom:12px}
+.error-state h3{font-size:1rem;color:rgba(255,255,255,.35);margin-bottom:6px}
+.error-state p{font-size:.85rem;margin-bottom:16px}
+.retry-btn{font-family:inherit;padding:10px 24px;font-size:.85rem;font-weight:600;border-radius:50px;border:2px solid rgba(233,69,96,.2);background:transparent;color:#e94560;cursor:pointer;transition:all .25s}
+.retry-btn:hover{background:rgba(233,69,96,.1);border-color:#e94560}
+
+footer{
+    text-align:center;padding:30px 20px 40px;
+    border-top:1px solid rgba(255,255,255,.04);
+    font-size:.78rem;color:rgba(255,255,255,.15);
+}
+footer a{color:rgba(255,255,255,.3);transition:color .2s}
+footer a:hover{color:#e94560}
+
+@media(max-width:768px){
+    header{flex-direction:column;gap:12px;text-align:center}
+    .dash{grid-template-columns:repeat(2,1fr)}
+    .action-bar{flex-direction:column}
+    .action-bar input{width:100%}
+    .sort-select{margin-left:0;width:100%}
+    .project-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+    .logo{font-size:1.4rem}
+    .dash-num{font-size:1.3rem}
+    .project-card{padding:18px}
+}
+</style>
+</head>
+<body>
+<header class="container">
+    <div class="logo">✦68110923<span>/projects</span></div>
+    <a class="gh-link" href="https://github.com/68110923" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
+</header>
+
+<div class="container">
+    <div class="hero-tag">
+        <span class="pill"><i class="fa-solid fa-bolt"></i> live</span>
+        <span>auto-synced from GitHub</span>
+        <span>·</span>
+        <span id="heroBio" style="font-size:.8rem;color:rgba(255,255,255,.2)">Loading...</span>
+    </div>
+
+    <div class="dash">
+        <div class="dash-item"><div class="dash-num repos" id="statRepos">--</div><div class="dash-label">Projects</div></div>
+        <div class="dash-item"><div class="dash-num pages" id="statPages">--</div><div class="dash-label">With Pages</div></div>
+        <div class="dash-item"><div class="dash-num stars" id="statStars">--</div><div class="dash-label">Stars</div></div>
+        <div class="dash-item"><div class="dash-num forks" id="statForks">--</div><div class="dash-label">Forks</div></div>
+    </div>
+
+    <div class="action-bar">
+        <input type="text" id="searchInput" placeholder="Search projects..." autocomplete="off">
+        <div class="filter-group">
+            <button class="filter-btn" data-filter="all">All</button>
+            <button class="filter-btn active" data-filter="pages">Featured</button>
+        </div>
+        <select class="sort-select" id="sortSelect">
+            <option value="updated">Latest</option>
+            <option value="stars">Stars ↓</option>
+            <option value="name">A–Z</option>
+        </select>
+    </div>
+</div>
+
+<div class="container">
+    <div class="project-grid card-stagger" id="projectGrid">
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+        <div class="skeleton-card"><div class="skeleton short"></div><div class="skeleton long" style="margin-top:14px"></div><div class="skeleton" style="width:50%"></div></div>
+    </div>
+</div>
+
+<footer class="container"><p>© <span id="footerYear">2026</span> 68110923 · <a href="https://github.com/68110923" target="_blank" rel="noopener">GitHub</a></p></footer>
+
+<script>
+const U='68110923',A='https://api.github.com',P=`https://${U}.github.io`;
+let all=[],cf='pages',cs='updated',sq='';
+const g=document.getElementById('projectGrid'),si=document.getElementById('searchInput'),ss=document.getElementById('sortSelect'),fb=document.querySelectorAll('.filter-btn');
+function rt(d){const n=Date.now(),t=new Date(d).getTime(),df=Math.max(0,n-t),m=Math.floor(df/6e4);if(m<1)return'now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const D=Math.floor(h/24);if(D<30)return D+'d';const M=Math.floor(D/30);return M<12?M+'mo':Math.floor(M/12)+'y'}
+async function fu(){const r=await fetch(`${A}/users/${U}`);if(!r.ok)throw Error();return r.json()}
+async function fr(){let a=[],p=1;while(1){const r=await fetch(`${A}/users/${U}/repos?per_page=100&page=${p}&sort=updated`);if(!r.ok)throw Error();const d=await r.json();if(!d.length)break;a=a.concat(d);p++}return a}
+const LC={JavaScript:'#f7df1e',TypeScript:'#3178c6',Python:'#3572a5',Go:'#00add8',Rust:'#dea584',Java:'#b07219',Kotlin:'#a97bff',Swift:'#f05138','C++':'#f34b7d',C:'#555555','C#':'#178600',PHP:'#4f5d95',Ruby:'#701516',Shell:'#89e051',HTML:'#e34c26',CSS:'#563d7c',Vue:'#4fc08d'},DC='#8b8b8b';
+function render(repos){
+    if(!repos.length){g.innerHTML=`<div class="empty-state"><p>No matches found</p></div>`;return}
+    g.innerHTML=repos.map((r,i)=>{const hp=r.has_pages,url=hp?`${P}/${r.name}/`:r.html_url,lb=hp?'visit':'source',pr=r.private,lc=LC[r.language]||DC;
+    return `<div class="project-card" style="animation-delay:${Math.min(i*.04,.5)}s">
+        <div class="card-top"><div class="repo-name"><span>${r.name}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+        <div class="card-badges">${hp?'<span class="badge pages">Pages</span>':''}${pr?'<span class="badge private">Private</span>':'<span class="badge public">Public</span>'}</div></div>
+        <div class="repo-desc" title="${(r.description||'').replace(/"/g,'&quot;')}">${r.description||'No description'}</div>
+        ${r.topics&&r.topics.length?`<div class="repo-topics">${r.topics.map(t=>`<span class="topic-tag">${t}</span>`).join('')}</div>`:''}
+        <div class="card-meta"><a href="${r.html_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Star on GitHub"><i class="fa-solid fa-star"></i> ${r.stargazers_count}</a><span>🍴 ${r.forks_count}</span>${r.language?`<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lc};vertical-align:middle"></span> ${r.language}</span>`:''}<span>${rt(r.pushed_at)}</span>
+        <a href="${url}" target="_blank" rel="noopener" class="card-link">${lb} <i class="fa-solid fa-arrow-right"></i></a></div></div>`}).join('')}
+function apply(){let l=[...all];if(cf==='pages')l=l.filter(r=>r.has_pages);if(sq){const q=sq.toLowerCase();l=l.filter(r=>r.name.toLowerCase().includes(q)||(r.description&&r.description.toLowerCase().includes(q)))}
+if(cs==='stars')l.sort((a,b)=>b.stargazers_count-a.stargazers_count);else if(cs==='name')l.sort((a,b)=>a.name.localeCompare(b.name));else l.sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));render(l)}
+function us(repos,u){document.getElementById('statRepos').textContent=repos.length;document.getElementById('statPages').textContent=repos.filter(r=>r.has_pages).length;document.getElementById('statStars').textContent=repos.reduce((s,r)=>s+r.stargazers_count,0);document.getElementById('statForks').textContent=repos.reduce((s,r)=>s+r.forks_count,0);if(u){document.getElementById('heroBio').textContent=u.bio||'Developer'}}
+async function init(){try{const[u,repos]=await Promise.all([fu(),fr()]);all=repos.filter(r=>!r.fork&&r.name!==`${U}.github.io`);us(all,u);apply()}catch(e){g.innerHTML=`<div class="error-state"><i class="fa-solid"></i><h3>Load failed</h3><p>${e.message}</p><button class="retry-btn" onclick="init()">↻ retry</button></div>`}}
+si.addEventListener('input',e=>{sq=e.target.value;apply()});ss.addEventListener('change',e=>{cs=e.target.value;apply()});
+fb.forEach(b=>{b.addEventListener('click',()=>{fb.forEach(x=>x.classList.remove('active'));b.classList.add('active');cf=b.dataset.filter;apply()})});
+document.getElementById('footerYear').textContent=new Date().getFullYear();init();
+</script>
+</body>
+</html>

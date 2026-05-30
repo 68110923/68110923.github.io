@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>68110923 ~ terminal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+    font-family:'JetBrains Mono','Fira Code',monospace;
+    background:#0c0c0c;color:#c0ffc0;min-height:100vh;
+    background-image:radial-gradient(ellipse at 50% 0,rgba(0,255,65,.03) 0,transparent 70%);
+}
+a{color:inherit;text-decoration:none}
+/* CRT scanline */
+body::after{
+    content:'';position:fixed;inset:0;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.15) 0,rgba(0,0,0,.15) 1px,transparent 1px,transparent 3px);
+    pointer-events:none;z-index:999;
+}
+.terminal{max-width:1100px;margin:0 auto;padding:20px}
+.window{
+    border:1px solid rgba(0,255,65,.25);border-radius:8px;
+    background:rgba(0,10,0,.85);overflow:hidden;
+    box-shadow:0 0 40px rgba(0,255,65,.05);
+}
+.window-header{
+    display:flex;align-items:center;gap:8px;padding:12px 16px;
+    border-bottom:1px solid rgba(0,255,65,.15);
+    background:rgba(0,20,0,.5);
+}
+.window-dot{width:10px;height:10px;border-radius:50%}
+.window-dot.r{background:#ff5f57}
+.window-dot.y{background:#ffbd2e}
+.window-dot.g{background:#28c840}
+.window-title{font-size:.7rem;color:rgba(192,255,192,.4);margin-left:auto;letter-spacing:.05em}
+.window-body{padding:24px;min-height:80vh}
+
+/* Prompt line */
+.prompt-line{display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:.85rem;flex-wrap:wrap}
+.prompt-user{color:#00ff41;font-weight:600}
+.prompt-sep{color:rgba(192,255,192,.3)}
+.prompt-path{color:#ffb000}
+.prompt-cursor{
+    display:inline-block;width:10px;height:1.2em;
+    background:#00ff41;animation:blink 1s step-end infinite;vertical-align:middle;
+    margin-left:4px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ASCII art header */
+.ascii-header{
+    color:#00ff41;font-size:.6rem;line-height:1.25;margin-bottom:24px;
+    white-space:pre;overflow-x:auto;opacity:.7;
+}
+
+/* System info */
+.sysinfo{display:flex;gap:24px;margin-bottom:28px;flex-wrap:wrap;font-size:.78rem}
+.sysinfo-item{color:rgba(192,255,192,.6)}
+.sysinfo-item span{color:#00ff41;font-weight:600}
+
+/* Search */
+.terminal-search{
+    display:flex;align-items:center;gap:10px;margin-bottom:24px;
+    padding:8px 14px;border:1px solid rgba(0,255,65,.2);border-radius:6px;
+    background:rgba(0,0,0,.4);
+}
+.terminal-search .prompt-user{font-size:.8rem}
+.terminal-search input{
+    flex:1;background:none;border:none;outline:none;
+    font-family:inherit;font-size:.8rem;color:#c0ffc0;caret-color:#00ff41;
+}
+.terminal-search input::placeholder{color:rgba(192,255,192,.2)}
+
+/* Filter line */
+.filter-line{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.filter-line .prompt-user{font-size:.75rem;margin-right:4px}
+.filter-btn{
+    font-family:inherit;font-size:.72rem;padding:4px 12px;
+    border:1px solid rgba(0,255,65,.2);border-radius:4px;
+    background:transparent;color:rgba(192,255,192,.6);cursor:pointer;transition:all .2s;
+}
+.filter-btn.active{background:rgba(0,255,65,.15);color:#00ff41;border-color:rgba(0,255,65,.4)}
+.filter-btn:hover:not(.active){background:rgba(0,255,65,.05);color:#c0ffc0}
+.sort-select{
+    font-family:inherit;font-size:.72rem;padding:4px 10px;margin-left:auto;
+    border:1px solid rgba(0,255,65,.2);border-radius:4px;
+    background:rgba(0,0,0,.4);color:rgba(192,255,192,.6);outline:none;cursor:pointer;
+}
+
+/* Output line - section header */
+.section-line{
+    color:rgba(192,255,192,.4);font-size:.75rem;margin-bottom:16px;
+    border-bottom:1px solid rgba(0,255,65,.08);padding-bottom:8px;
+}
+
+/* Project listing - ls style */
+.project-list{display:flex;flex-direction:column;gap:2px;margin-bottom:32px}
+.project-ls-item{
+    display:flex;align-items:center;gap:12px;padding:6px 10px;
+    border-radius:4px;transition:background .15s;cursor:default;
+    font-size:.78rem;
+}
+.project-ls-item:hover{background:rgba(0,255,65,.04)}
+.project-ls-icon{color:rgba(192,255,192,.3);width:16px;text-align:center;flex-shrink:0}
+.project-ls-name{color:#c0ffc0;font-weight:600}
+.project-ls-name i{margin-left:6px;font-size:.6rem;opacity:0;transition:all .2s}
+.project-ls-item:hover .project-ls-name i{opacity:.5}
+.project-ls-pages{font-size:.6rem;color:#ffb000;background:rgba(255,176,0,.12);padding:1px 8px;border-radius:3px;flex-shrink:0}
+.project-ls-private{font-size:.6rem;color:#ff5f57;background:rgba(255,95,87,.1);padding:1px 8px;border-radius:3px;flex-shrink:0}
+.project-ls-public{font-size:.6rem;color:rgba(0,255,65,.5);padding:1px 8px;border-radius:3px;flex-shrink:0}
+.project-ls-desc{color:rgba(192,255,192,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.project-ls-stars{color:rgba(255,176,0,.5);flex-shrink:0;font-size:.7rem}
+.project-ls-link{flex-shrink:0;font-size:.65rem;color:rgba(0,255,65,.35);transition:color .2s;margin-left:auto;padding:2px 8px;border-radius:3px}
+.project-ls-link:hover{color:#00ff41;background:rgba(0,255,65,.08)}
+
+/* Empty & Error */
+.empty-state,.error-state{text-align:center;padding:60px 20px;color:rgba(192,255,192,.3)}
+.error-state .fa-solid{font-size:2rem;color:#ff5f57;margin-bottom:12px}
+.error-state h3{font-size:1rem;color:rgba(255,95,87,.7);margin-bottom:6px}
+.error-state p{font-size:.8rem;color:rgba(192,255,192,.3);margin-bottom:16px}
+.retry-btn{font-family:inherit;padding:8px 20px;border:1px solid rgba(0,255,65,.3);border-radius:4px;background:transparent;color:#00ff41;cursor:pointer;font-size:.8rem}
+.retry-btn:hover{background:rgba(0,255,65,.1)}
+
+/* Skeleton */
+.skeleton-line{height:14px;border-radius:3px;margin-bottom:8px;background:rgba(0,255,65,.04);animation:pulse 1.5s ease-in-out infinite}
+.skeleton-line.short{width:30%}
+.skeleton-line.med{width:60%}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
+
+/* Footer */
+.terminal-footer{
+    text-align:center;padding:20px;font-size:.7rem;color:rgba(192,255,192,.2);margin-top:20px;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .window-body{padding:16px}
+    .project-ls-desc{display:none}
+    .project-ls-item{flex-wrap:wrap;gap:6px}
+    .filter-line .sort-select{margin-left:0;width:100%;margin-top:4px}
+    .sysinfo{gap:12px;font-size:.7rem}
+}
+@media(max-width:480px){
+    .window-body{padding:12px}
+    .project-ls-stars,.project-ls-link{font-size:.6rem}
+}
+</style>
+</head>
+<body>
+<div class="terminal">
+<div class="window">
+<div class="window-header">
+    <span class="window-dot r"></span>
+    <span class="window-dot y"></span>
+    <span class="window-dot g"></span>
+    <span class="window-title">68110923@github:~/projects</span>
+</div>
+<div class="window-body" id="windowBody">
+
+<div class="ascii-header">
+   ╔══════════════════════════════════════════════════╗
+   ║  88888888888 888     888 88888888888 8888888888  ║
+   ║      888     888     888     888     888         ║
+   ║      888     888     888     888     888         ║
+   ║      888     88888888888     888     8888888888  ║
+   ║      888     888     888     888           888   ║
+   ║      888     888     888     888           888   ║
+   ║      888     888     888     888     8888888888  ║
+   ╚══════════════════════════════════════════════════╝
+</div>
+
+<div class="prompt-line">
+    <span class="prompt-user">guest@68110923</span>
+    <span class="prompt-sep">:</span>
+    <span class="prompt-path">~</span>
+    <span class="prompt-sep">$</span>
+    <span style="color:rgba(192,255,192,.5)">./status.sh</span>
+</div>
+
+<div class="sysinfo" id="sysInfo">
+    <span class="sysinfo-item">repos <span id="statRepos">--</span></span>
+    <span class="sysinfo-item">pages <span id="statPages">--</span></span>
+    <span class="sysinfo-item">stars <span id="statStars">--</span></span>
+    <span class="sysinfo-item">forks <span id="statForks">--</span></span>
+</div>
+
+<div class="terminal-search">
+    <span class="prompt-user">$</span>
+    <span style="color:rgba(192,255,192,.3);font-size:.75rem">grep</span>
+    <input type="text" id="searchInput" placeholder="search projects..." autocomplete="off">
+</div>
+
+<div class="filter-line">
+    <span class="prompt-user" style="margin-right:8px">filter:</span>
+    <button class="filter-btn" data-filter="all">all</button>
+    <button class="filter-btn active" data-filter="pages">pages</button>
+    <select class="sort-select" id="sortSelect">
+        <option value="updated">sort:updated</option>
+        <option value="stars">sort:stars</option>
+        <option value="name">sort:name</option>
+    </select>
+</div>
+
+<div class="section-line">📁 total <span id="totalCount">0</span> result(s)</div>
+
+<div class="project-list" id="projectList">
+    <div class="skeleton-line short" style="margin-top:8px"></div>
+    <div class="skeleton-line med"></div>
+    <div class="skeleton-line short"></div>
+    <div class="skeleton-line med"></div>
+    <div class="skeleton-line short"></div>
+    <div class="skeleton-line med"></div>
+</div>
+
+<div class="prompt-line">
+    <span class="prompt-user">guest@68110923</span>
+    <span class="prompt-sep">:</span>
+    <span class="prompt-path">~</span>
+    <span class="prompt-sep">$</span>
+    <span class="prompt-cursor"></span>
+</div>
+
+</div></div>
+
+<div class="terminal-footer">
+    <span>[data sync via github api] <span id="footerYear">2026</span></span>
+</div>
+</div>
+
+<script>
+const USERNAME='68110923',API='https://api.github.com',PAGES=`https://${USERNAME}.github.io`;
+let allRepos=[],currentFilter='pages',currentSort='updated',searchQuery='';
+const grid=document.getElementById('projectList'),searchInput=document.getElementById('searchInput'),sortSelect=document.getElementById('sortSelect');
+const filterBtns=document.querySelectorAll('.filter-btn');
+function relativeTime(d){const n=Date.now(),t=new Date(d).getTime(),diff=Math.max(0,n-t),m=Math.floor(diff/6e4);if(m<1)return'just now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const D=Math.floor(h/24);if(D<30)return D+'d';const M=Math.floor(D/30);return M<12?M+'mo':Math.floor(M/12)+'y'}
+async function fetchUser(){const r=await fetch(`${API}/users/${USERNAME}`);if(!r.ok)throw Error('fetch failed');return r.json()}
+async function fetchRepos(){let all=[],p=1;while(1){const r=await fetch(`${API}/users/${USERNAME}/repos?per_page=100&page=${p}&sort=updated`);if(!r.ok)throw Error('fetch failed');const d=await r.json();if(!d.length)break;all=all.concat(d);p++}return all}
+function render(repos){
+    if(!repos.length){grid.innerHTML=`<div class="empty-state"><i class="fa-solid fa-folder-open"></i><h3>no matches</h3><p>try a different filter</p></div>`;return}
+    document.getElementById('totalCount').textContent=repos.length;
+    grid.innerHTML=repos.map((r,i)=>{
+        const hp=r.has_pages,url=hp?`${PAGES}/${r.name}/`:r.html_url,lb=hp?'open':'source',pr=r.private,desc=(r.description||'').slice(0,80);
+        return`<a href="${url}" target="_blank" rel="noopener" class="project-ls-item" style="animation:fadeIn .3s ${i*0.04}s both">
+            <span class="project-ls-icon">${hp?'📄':'📁'}</span>
+            <span class="project-ls-name">${r.name}<i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+            ${hp?'<span class="project-ls-pages">PAGES</span>':''}
+            ${pr?'<span class="project-ls-private">PRIVATE</span>':'<span class="project-ls-public">PUBLIC</span>'}
+            <span class="project-ls-desc" title="${(r.description||'').replace(/"/g,'&quot;')}">${desc}</span>
+            <a href="${r.html_url}" target="_blank" rel="noopener" class="project-ls-stars" title="在 GitHub 上点 Star">★${r.stargazers_count}</a>
+            <span style="color:rgba(192,255,192,.25);flex-shrink:0;font-size:.65rem">${relativeTime(r.pushed_at)}</span>
+        </a>`
+    }).join('');
+}
+function apply(){let l=[...allRepos];if(currentFilter==='pages')l=l.filter(r=>r.has_pages);if(searchQuery){const q=searchQuery.toLowerCase();l=l.filter(r=>r.name.toLowerCase().includes(q)||(r.description&&r.description.toLowerCase().includes(q)))}
+if(currentSort==='stars')l.sort((a,b)=>b.stargazers_count-a.stargazers_count);else if(currentSort==='name')l.sort((a,b)=>a.name.localeCompare(b.name));else l.sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));render(l)}
+function updateStats(repos,user){document.getElementById('statRepos').textContent=repos.length;document.getElementById('statPages').textContent=repos.filter(r=>r.has_pages).length;document.getElementById('statStars').textContent=repos.reduce((s,r)=>s+r.stargazers_count,0);document.getElementById('statForks').textContent=repos.reduce((s,r)=>s+r.forks_count,0)}
+async function init(){try{const[u,repos]=await Promise.all([fetchUser(),fetchRepos()]);allRepos=repos.filter(r=>!r.fork&&r.name!==`${USERNAME}.github.io`);updateStats(allRepos,u);apply()}catch(e){grid.innerHTML=`<div class="error-state"><i class="fa-solid fa-triangle-exclamation"></i><h3>connection error</h3><p>${e.message}</p><button class="retry-btn" onclick="init()">retry</button></div>`}}
+searchInput.addEventListener('input',e=>{searchQuery=e.target.value;apply()});
+sortSelect.addEventListener('change',e=>{currentSort=e.target.value;apply()});
+filterBtns.forEach(b=>{b.addEventListener('click',()=>{filterBtns.forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;apply()})});
+document.getElementById('footerYear').textContent=new Date().getFullYear();
+init();
+</script>
+</body>
+</html>
