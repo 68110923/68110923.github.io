@@ -145,10 +145,6 @@ function applyFilterAndSort() {
 
     if (currentFilter === 'pages') {
         list = list.filter(r => r.has_pages);
-    } else if (currentFilter === 'nopages') {
-        list = list.filter(r => !r.has_pages);
-    } else if (currentFilter === 'public') {
-        list = list.filter(r => !r.private);
     }
 
     if (searchQuery) {
@@ -175,13 +171,13 @@ function applyFilterAndSort() {
 
 // ===== Stats =====
 function updateStats(repos, user) {
-    document.getElementById('statRepos').textContent = repos.length;
+    document.getElementById('statProjects').textContent = repos.length;
+    const pagesCount = repos.filter(r => r.has_pages).length;
+    document.getElementById('statImportant').textContent = pagesCount;
     const totalStars = repos.reduce((s, r) => s + r.stargazers_count, 0);
     document.getElementById('statStars').textContent = totalStars;
     const totalForks = repos.reduce((s, r) => s + r.forks_count, 0);
     document.getElementById('statForks').textContent = totalForks;
-    const pagesCount = repos.filter(r => r.has_pages).length;
-    document.getElementById('statPages').textContent = pagesCount;
 
     if (user) {
         document.getElementById('heroName').textContent = user.login;
@@ -239,7 +235,7 @@ themeToggle.addEventListener('click', () => {
     setTheme(current === 'dark' ? 'light' : 'dark');
 });
 
-const savedTheme = localStorage.getItem('theme') || 'dark';
+const savedTheme = localStorage.getItem('theme') || 'light';
 setTheme(savedTheme);
 
 // Footer year
