@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>68110923 ~ terminal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐊</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="config.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -231,7 +233,7 @@ body::after{
 </div>
 
 <script>
-const USERNAME='68110923',API='https://api.github.com',PAGES=`https://${USERNAME}.github.io`;
+const API=GITHUB_API,PAGES=GITHUB_PAGES;
 let allRepos=[],currentFilter='pages',currentSort='updated',searchQuery='';
 const grid=document.getElementById('projectList'),searchInput=document.getElementById('searchInput'),sortSelect=document.getElementById('sortSelect');
 const filterBtns=document.querySelectorAll('.filter-btn');

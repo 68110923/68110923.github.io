@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>68110923</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐊</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="config.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -193,7 +195,7 @@ img{max-width:100%;display:block}
 </div>
 
 <script>
-const USERNAME='68110923',API='https://api.github.com',PAGES=`https://${USERNAME}.github.io`;
+const API=GITHUB_API,PAGES=GITHUB_PAGES;
 let allRepos=[],currentFilter='pages',currentSort='updated',searchQuery='';
 const grid=document.getElementById('projectGrid'),si=document.getElementById('searchInput'),ss=document.getElementById('sortSelect'),fb=document.querySelectorAll('.filter-btn');
 function rt(d){const n=Date.now(),t=new Date(d).getTime(),diff=Math.max(0,n-t),m=Math.floor(diff/6e4);if(m<1)return'now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const D=Math.floor(h/24);if(D<30)return D+'d';const M=Math.floor(D/30);return M<12?M+'mo':Math.floor(M/12)+'y'}
@@ -202,7 +204,7 @@ async function fr(){let a=[],p=1;while(1){const r=await fetch(`${API}/users/${US
 function render(repos){
     if(!repos.length){grid.innerHTML=`<div class="empty-state"><p>No projects match your criteria.</p></div>`;return}
     grid.innerHTML=repos.map((r,i)=>{
-        const hp=r.has_pages,url=hp?`${PAGES}/${r.name}/`:r.html_url,lb=hp?'Visit site':'Source',pr=r.private,lc=r.language?{JavaScript:'#f7df1e',TypeScript:'#3178c6',Python:'#3572a5',Go:'#00add8','C++':'#f34b7d',Java:'#b07219',Ruby:'#701516',Shell:'#89e051',HTML:'#e34c26',CSS:'#563d7c',Vue:'#4fc08d',Rust:'#dea584',Kotlin:'#a97bff',Swift:'#f05138'}[r.language]||'#8b8b8b':'#8b8b8b';
+        const hp=r.has_pages,url=hp?`${PAGES}/${r.name}/`:r.html_url,lb=hp?'Visit site':'Source',pr=r.private,lc=r.language?LANG_COLORS[r.language]||DEFAULT_LANG_COLOR:DEFAULT_LANG_COLOR;
         return`<div class="project-card" style="animation-delay:${Math.min(i*.04,.5)}s">
             <div class="card-top">
                 <div class="repo-name"><span>${r.name}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></div>

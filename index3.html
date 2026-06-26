@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>68110923 · projects</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐊</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="config.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -203,29 +205,23 @@ img{max-width:100%;display:block}
 </div>
 
 <script>
-const U='68110923',A='https://api.github.com',P=`https://${U}.github.io`;
+const A=GITHUB_API,P=GITHUB_PAGES;
 let all=[],cf='pages',cs='updated',sq='';
 const g=document.getElementById('projectGrid'),si=document.getElementById('searchInput'),ss=document.getElementById('sortSelect'),fb=document.querySelectorAll('.filter-btn');
 function rt(d){const n=Date.now(),t=new Date(d).getTime(),df=Math.max(0,n-t),m=Math.floor(df/6e4);if(m<1)return'now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const D=Math.floor(h/24);if(D<30)return D+'d';const M=Math.floor(D/30);return M<12?M+'mo':Math.floor(M/12)+'y'}
 async function fu(){const r=await fetch(`${A}/users/${U}`);if(!r.ok)throw Error();return r.json()}
 async function fr(){let a=[],p=1;while(1){const r=await fetch(`${A}/users/${U}/repos?per_page=100&page=${p}&sort=updated`);if(!r.ok)throw Error();const d=await r.json();if(!d.length)break;a=a.concat(d);p++}return a}
-const LC={JavaScript:'#f7df1e',TypeScript:'#3178c6',Python:'#3572a5',Go:'#00add8',Rust:'#dea584',Java:'#b07219',Kotlin:'#a97bff',Swift:'#f05138','C++':'#f34b7d',C:'#555555','C#':'#178600',PHP:'#4f5d95',Ruby:'#701516',Shell:'#89e051',HTML:'#e34c26',CSS:'#563d7c',Vue:'#4fc08d'},DC='#8b8b8b';
+
 function render(repos){
-    if(!repos.length){g.innerHTML=`<div class="empty-state"><p style="color:rgba(255,255,255,.2)">No matches</p></div>`;return}
-    g.innerHTML=repos.map((r,i)=>{const hp=r.has_pages,url=hp?`${P}/${r.name}/`:r.html_url,lb=hp?'visit':'source',pr=r.private,lc=LC[r.language]||DC;
-    return `<div class="project-card" style="animation-delay:${Math.min(i*.04,.5)}s"><div class="card-glow"></div>
-        <div class="card-top"><div class="repo-name"><span>${r.name}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-        <div class="card-badges">${hp?'<span class="badge pages">Pages</span>':''}${pr?'<span class="badge private">Private</span>':'<span class="badge public">Public</span>'}</div></div>
-        <div class="repo-desc" title="${(r.description||'').replace(/"/g,'&quot;')}">${r.description||'No description'}</div>
-        ${r.topics&&r.topics.length?`<div class="repo-topics">${r.topics.map(t=>`<span class="topic-tag">${t}</span>`).join('')}</div>`:''}
-        <div class="card-meta"><a href="${r.html_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Star on GitHub">⭐ ${r.stargazers_count}</a><span>🍴 ${r.forks_count}</span>${r.language?`<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lc};vertical-align:middle"></span> ${r.language}</span>`:''}<span>${rt(r.pushed_at)}</span>
-        <a href="${url}" target="_blank" rel="noopener" class="card-link">${lb} →</a></div></div>`}).join('')}
-function apply(){let l=[...all];if(cf==='pages')l=l.filter(r=>r.has_pages);if(sq){const q=sq.toLowerCase();l=l.filter(r=>r.name.toLowerCase().includes(q)||(r.description&&r.description.toLowerCase().includes(q)))}
-if(cs==='stars')l.sort((a,b)=>b.stargazers_count-a.stargazers_count);else if(cs==='name')l.sort((a,b)=>a.name.localeCompare(b.name));else l.sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));render(l)}
-function us(repos,u){document.getElementById('statRepos').textContent=repos.length;document.getElementById('statPages').textContent=repos.filter(r=>r.has_pages).length;document.getElementById('statStars').textContent=repos.reduce((s,r)=>s+r.stargazers_count,0);document.getElementById('statForks').textContent=repos.reduce((s,r)=>s+r.forks_count,0);if(u){document.getElementById('heroName').textContent=u.login;document.getElementById('heroBio').textContent=u.bio||'Developer';document.getElementById('avatarImg').src=u.avatar_url}}
-async function init(){try{const[u,repos]=await Promise.all([fu(),fr()]);all=repos.filter(r=>!r.fork&&r.name!==`${U}.github.io`);us(all,u);apply()}catch(e){g.innerHTML=`<div class="error-state"><i class="fa-solid fa-cloud-bolt"></i><h3>Connection lost</h3><p>${e.message}</p><button class="retry-btn" onclick="init()">Retry</button></div>`}}
-si.addEventListener('input',e=>{sq=e.target.value;apply()});ss.addEventListener('change',e=>{cs=e.target.value;apply()});
-fb.forEach(b=>{b.addEventListener('click',()=>{fb.forEach(x=>x.classList.remove('active'));b.classList.add('active');cf=b.dataset.filter;apply()})});
+    if(!repos.length){g.innerHTML='<div class="empty-state"><p style="color:rgba(255,255,255,.2)">No matches</p></div>';return}
+    g.innerHTML=repos.map(function(r,i){var hp=r.has_pages,url=hp?'${PAGES}/${r.name}/':r.html_url,lb=hp?'visit':'source',pr=r.private,lc=LANG_COLORS[r.language]||DEFAULT_LANG_COLOR;
+    return '<div class="project-card" style="animation-delay:'+Math.min(i*.04,.5)+'s"><div class="card-glow"></div><div class="card-top"><div class="repo-name"><span>'+r.name+'</span><i class="fa-solid fa-arrow-up-right-from-square"></i></div><div class="card-badges">'+(hp?'<span class="badge pages">Pages</span>':'')+(pr?'<span class="badge private">Private</span>':'<span class="badge public">Public</span>')+'</div></div><div class="repo-desc" title="'+(r.description||'').replace(/"/g,"&quot;")+'">'+(r.description||'No description')+'</div>'+(r.topics&&r.topics.length?'<div class="repo-topics">'+r.topics.map(function(t){return'<span class="topic-tag">'+t+'</span>'}).join('')+'</div>':'')+'<div class="card-meta"><a href="'+r.html_url+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Star on GitHub">⭐ '+r.stargazers_count+'</a><span>🍴 '+r.forks_count+'</span>'+(r.language?'<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+lc+';vertical-align:middle"></span> '+r.language+'</span>':'')+'<span>'+rt(r.pushed_at)+'</span><a href="'+url+'" target="_blank" rel="noopener" class="card-link">'+lb+' →</a></div></div>'}).join('')}
+function apply(){var l=[].concat(all);if(cf==='pages')l=l.filter(function(x){return x.has_pages});if(sq){var q=sq.toLowerCase();l=l.filter(function(x){return x.name.toLowerCase().indexOf(q)!==-1||(x.description&&x.description.toLowerCase().indexOf(q)!==-1)})}
+if(cs==='stars')l.sort(function(a,b){return b.stargazers_count-a.stargazers_count});else if(cs==='name')l.sort(function(a,b){return a.name.localeCompare(b.name)});else l.sort(function(a,b){return new Date(b.pushed_at)-new Date(a.pushed_at)});render(l)}
+function us(repos,u){document.getElementById('statRepos').textContent=repos.length;document.getElementById('statPages').textContent=repos.filter(function(x){return x.has_pages}).length;document.getElementById('statStars').textContent=repos.reduce(function(s,r){return s+r.stargazers_count},0);document.getElementById('statForks').textContent=repos.reduce(function(s,r){return s+r.forks_count},0);if(u){document.getElementById('heroName').textContent=u.login;document.getElementById('heroBio').textContent=u.bio||'Developer';document.getElementById('avatarImg').src=u.avatar_url}}
+async function init(){try{var ur=await Promise.all([fu(),fr()]);var u=ur[0],repos=ur[1];all=repos.filter(function(r){return !r.fork&&r.name!==USERNAME+'.github.io'});us(all,u);apply()}catch(e){g.innerHTML='<div class="error-state"><i class="fa-solid fa-cloud-bolt"></i><h3>Connection lost</h3><p>'+e.message+'</p><button class="retry-btn" onclick="init()">Retry</button></div>'}}
+si.addEventListener('input',function(e){sq=e.target.value;apply()});ss.addEventListener('change',function(e){cs=e.target.value;apply()});
+fb.forEach(function(b){b.addEventListener('click',function(){fb.forEach(function(x){x.classList.remove('active')});b.classList.add('active');cf=b.dataset.filter;apply()})});
 document.getElementById('footerYear').textContent=new Date().getFullYear();init();
 </script>
 </body>
